@@ -28,7 +28,6 @@ alpha = u1/lcell+1.0;
 % Rin-Yin Model. The function is nonlinear thus called at each iteration
 [S,Dcell]= RinYin(fr,alpha);
 [Kcell,equivf] = element1D(S,Dcell,Scell,lcell,alpha);
-[Kgel,gelSpringF] = NegroniPassive(alpha,Scell,lcell);
 Pmxwl = 2*Bgel*udot0+betak*Qk;
 for iter = 1:mxiter % Newton Raphson iteration
     % Merge, extracting node 2 equation only (node 1 and 3 are bounded)
@@ -150,6 +149,24 @@ function [Kcell,equivf] = element1D(S,D,Area,lcell,alpha)
 Kcell = (alpha^2*D+S)*Area/lcell;
 equivf = -alpha*Area*S;
 
+function [Kcell,equivf] = NegroniPassive(alpha,Scell,Lcell)
+Ke=105000; %[kPa/um^5]
+Le=10;
+L0=0.97;
+x = L0*alpha;
+Kcell = 5*Ke*(x-L0)^4+Le;
+Kcell = Kcell*Scell/Lcell;
+equivf = Ke*(x-L0)^5+Le*(x-L0);
+equivf = -equivf*Scell/Lcell;
+
+function [Kcell,equivf] = GelPassiveSpring(u,S,L,CL)
+Ke=1050000*CL; %[kPa/um^5]
+Le=10*CL;
+dudx = u/L;
+Kcell = 5*Ke*dudx^4+Le;
+Kcell = Kcell*S;
+equivf = Ke*dudx^5+Le*dudx;
+equivf = -equivf*S;
 
 function [S,Dmat] = RinYin(fr, alpha)
 %unit kPa, um, nN
