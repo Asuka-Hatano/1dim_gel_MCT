@@ -74,7 +74,7 @@ sigma0 = s0*(1-exp(-s1*CL)); %eq 9c
 % tau0
 % sigma0
 % pause(10)
-Ginfty= 0;     % [kPa] G0*0.1; %
+Ginfty= G0*0.1; %0;     % [kPa]
 zeta = zeros(1,Nmaxwell);
 tau = zeros(1,Nmaxwell);
 E   = zeros(1,Nmaxwell);
@@ -149,29 +149,11 @@ function [Kcell,equivf] = element1D(S,D,Area,lcell,alpha)
 Kcell = (alpha^2*D+S)*Area/lcell;
 equivf = -alpha*Area*S;
 
-function [Kcell,equivf] = NegroniPassive(alpha,Scell,Lcell)
-Ke=105000; %[kPa/um^5]
-Le=10;
-L0=0.97;
-x = L0*alpha;
-Kcell = 5*Ke*(x-L0)^4+Le;
-Kcell = Kcell*Scell/Lcell;
-equivf = Ke*(x-L0)^5+Le*(x-L0);
-equivf = -equivf*Scell/Lcell;
-
-function [Kcell,equivf] = GelPassiveSpring(u,S,L,CL)
-Ke=1050000*CL; %[kPa/um^5]
-Le=10*CL;
-dudx = u/L;
-Kcell = 5*Ke*dudx^4+Le;
-Kcell = Kcell*S;
-equivf = Ke*dudx^5+Le*dudx;
-equivf = -equivf*S;
 
 function [S,Dmat] = RinYin(fr, alpha)
 %unit kPa, um, nN
 cp1 =  3080.D-3;
-cp2 =  6480.D-3; %3240.D-3;
+cp2 =  3240.D-3;
 cp3 =   359.D-3;
 cp4 = -1940.D-3;
 cp5 =  1660.D-3;
